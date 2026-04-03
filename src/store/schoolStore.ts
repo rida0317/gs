@@ -581,7 +581,34 @@ export const useSchoolStore = create<SchoolStore>()(
       },
 
       exportBackup: () => JSON.stringify(get()),
-      importBackup: (backupData) => { try { set(JSON.parse(backupData)); return true } catch { return false } },
+      importBackup: (backupData) => {
+        try {
+          const parsed = JSON.parse(backupData)
+          // Handle both wrapped {state: {...}} and direct {...} formats
+          const actualData = parsed.state || parsed
+          
+          console.log('📖 Parsing backup data:', actualData)
+          
+          if (!actualData || typeof actualData !== 'object') {
+            throw new Error('Invalid backup format')
+          }
+
+          set((state) => ({
+            ...state,
+            ...actualData,
+            // Ensure functions are not overwritten
+            forceSave: state.forceSave,
+            fetchAllData: state.fetchAllData,
+            importBackup: state.importBackup,
+            syncAllToSupabase: state.syncAllToSupabase
+          }))
+          
+          return true
+        } catch (err) {
+          console.error('❌ Import Backup Error:', err)
+          return false
+        }
+      },
       _autoBackup: () => { try { localStorage.setItem(BACKUP_KEY, JSON.stringify({ data: get(), timestamp: new Date().toISOString() })) } catch (e) { /* ignore error */ } }
     }),
     {
