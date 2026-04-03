@@ -271,12 +271,25 @@ const SettingsExtended: React.FC = () => {
               // For now, let's assume direct set or simple check
             }
 
-            // 4. Final Sync to Supabase
+            // 4. Final Sync to Supabase with Countdown
             try {
-              alert('🔄 Syncing data to Cloud (Supabase)... Please wait.')
+              setSyncStatus('🔄 Preparing data for Cloud Sync...')
+              setSyncCountdown(30) // Estimated 30 seconds for full sync
+              
+              const timer = setInterval(() => {
+                setSyncCountdown(prev => (prev !== null && prev > 0) ? prev - 1 : 0)
+              }, 1000)
+
+              setSyncStatus('🚀 Syncing Teachers, Classes, Students & More to Supabase...')
               await syncAllToSupabase()
+              
+              clearInterval(timer)
+              setSyncCountdown(null)
+              setSyncStatus('✅ Sync Completed successfully!')
             } catch (err) {
               console.error('Final sync failed:', err)
+              setSyncStatus('❌ Sync Failed. Check console for details.')
+              setSyncCountdown(null)
             }
 
             alert('✅ Backup imported and synced successfully! Application will reload.')
@@ -338,6 +351,48 @@ const SettingsExtended: React.FC = () => {
 
   return (
     <div className="settings-extended">
+      {/* Sync Status Overlay */}
+      {syncCountdown !== null && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          color: 'white',
+          textAlign: 'center',
+          padding: '20px'
+        }}>
+          <div style={{ 
+            width: '80px', 
+            height: '80px', 
+            border: '8px solid #333', 
+            borderTop: '8px solid var(--primary-color, #4f46e5)', 
+            borderRadius: '50%', 
+            animation: 'spin 1s linear infinite',
+            marginBottom: '2rem'
+          }}></div>
+          <h2 style={{ fontSize: '1.8rem', marginBottom: '1rem' }}>{syncStatus}</h2>
+          <div style={{ fontSize: '4rem', fontWeight: 'bold', color: 'var(--primary-color, #4f46e5)' }}>
+            {syncCountdown}s
+          </div>
+          <p style={{ marginTop: '1.5rem', color: '#888', maxWidth: '400px' }}>
+            Uploading your local database to Supabase Cloud. Please do not refresh or close this page.
+          </p>
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
+        </div>
+      )}
       <div className="page-header">
         <h1 className="page-title">⚙️ {t('nav.settings')}</h1>
         <p className="page-subtitle">Configure your application</p>
