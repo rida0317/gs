@@ -316,16 +316,16 @@ const SettingsExtended: React.FC = () => {
             <div className="settings-card">
               <h2 className="card-title">🏫 School Information</h2>
               <div className="form-group">
-                <label className="form-label">{t('settings.schoolName')}</label>
-                <input type="text" className="input" value={name} onChange={(e) => setName(e.target.value)} />
+                <label className="form-label" htmlFor="schoolNameInput">{t('settings.schoolName')}</label>
+                <input id="schoolNameInput" name="schoolName" type="text" className="input" value={name} onChange={(e) => setName(e.target.value)} />
               </div>
               <div className="form-group">
-                <label className="form-label">{t('settings.academicYear')}</label>
-                <input type="text" className="input" placeholder="2025-2026" value={year} onChange={(e) => setYear(e.target.value)} />
+                <label className="form-label" htmlFor="academicYearInput">{t('settings.academicYear')}</label>
+                <input id="academicYearInput" name="academicYear" type="text" className="input" placeholder="2025-2026" value={year} onChange={(e) => setYear(e.target.value)} />
               </div>
               <div className="form-group">
-                <label className="form-label">Logo URL</label>
-                <input type="url" className="input" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} />
+                <label className="form-label" htmlFor="logoUrlInput">Logo URL</label>
+                <input id="logoUrlInput" name="logoUrl" type="url" className="input" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} />
               </div>
               <button className="btn btn-primary" onClick={handleSaveSchoolInfo}>💾 Save Changes</button>
             </div>
@@ -349,8 +349,8 @@ const SettingsExtended: React.FC = () => {
             <div className="settings-card">
               <h2 className="card-title">💾 Créer une sauvegarde</h2>
               <div className="form-group">
-                <label className="form-label">Nom</label>
-                <input type="text" className="input" value={backupName} onChange={(e) => setBackupName(e.target.value)} />
+                <label className="form-label" htmlFor="backupNameInput">Nom</label>
+                <input id="backupNameInput" name="backupName" type="text" className="input" value={backupName} onChange={(e) => setBackupName(e.target.value)} />
               </div>
               <button className="btn btn-primary" onClick={handleCreateBackup} disabled={isCreatingBackup}>
                 {isCreatingBackup ? '⏳ ...' : '💾 Créer'}
@@ -393,7 +393,10 @@ const SettingsExtended: React.FC = () => {
             <div className="settings-card large">
               <h2 className="card-title">📚 Subject Management</h2>
               <form onSubmit={handleAddSubject} className="add-subject-form">
-                <input type="text" className="input" value={subjectName} onChange={(e) => setSubjectName(e.target.value)} />
+                <div className="form-group">
+                  <label className="form-label" htmlFor="newSubjectInput">New Subject</label>
+                  <input id="newSubjectInput" name="subjectName" type="text" className="input" value={subjectName} onChange={(e) => setSubjectName(e.target.value)} />
+                </div>
                 <button type="submit" className="btn btn-primary">➕ Add</button>
               </form>
               <div className="subjects-grid">

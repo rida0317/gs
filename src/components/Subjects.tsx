@@ -153,9 +153,10 @@ const Subjects: React.FC = () => {
 
             <form onSubmit={handleAddSubject} className="subject-form">
               <div className="form-group">
-                <label className="form-label" htmlFor="subjectName">{t('subjects.subjectName')}</label>
+                <label className="form-label" htmlFor="subjectNameInput">{t('subjects.subjectName')}</label>
                 <input
-                  id="subjectName"
+                  id="subjectNameInput"
+                  name="subjectName"
                   type="text"
                   className="input"
                   value={newSubjectName}
