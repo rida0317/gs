@@ -566,7 +566,55 @@ export const useSchoolStore = create<SchoolStore>()(
             await supabase.from('subjects').upsert(subjectsToSync, { onConflict: 'school_id,name' })
           }
 
-          console.log('✅ Bulk sync completed!')
+          // 5. Sync Levels
+          if (state.customLevels.length > 0) {
+            const levelsToSync = state.customLevels.map(l => ({
+              school_id: currentSchoolId,
+              name: l.name,
+              is_active: true
+            }))
+            await supabase.from('levels').upsert(levelsToSync, { onConflict: 'school_id,name' })
+          }
+
+          // 6. Sync Salles
+          if (state.salles.length > 0) {
+            const sallesToSync = state.salles.map(s => ({
+              school_id: currentSchoolId,
+              name: s.name,
+              capacity: s.capacity,
+              type: s.type,
+              is_active: true
+            }))
+            await supabase.from('salles').upsert(sallesToSync, { onConflict: 'school_id,name' })
+          }
+
+          // 7. Sync Timetables
+          if (Object.keys(state.timetables).length > 0) {
+            const timetablesToSync = Object.entries(state.timetables).map(([classId, schedule]) => ({
+              school_id: currentSchoolId,
+              class_id: classId,
+              schedule: schedule,
+              academic_year: academicYear
+            }))
+            // Note: Make sure 'timetables' table exists in Supabase
+            await supabase.from('timetables').upsert(timetablesToSync, { onConflict: 'school_id,class_id,academic_year' })
+          }
+
+          // 8. Sync Replacements
+          if (state.replacements.length > 0) {
+            const replacementsToSync = state.replacements.map(r => ({
+              school_id: currentSchoolId,
+              teacher_id: r.teacherId,
+              replacing_teacher_id: r.replacingTeacherId,
+              class_id: r.classId,
+              date: r.date,
+              period: r.period,
+              academic_year: academicYear
+            }))
+            await supabase.from('replacements').upsert(replacementsToSync)
+          }
+
+          console.log('✅ Full bulk sync completed!')
         } catch (error) {
           console.error('❌ Bulk sync failed:', error)
           throw error
