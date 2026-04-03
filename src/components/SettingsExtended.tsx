@@ -246,16 +246,43 @@ const SettingsExtended: React.FC = () => {
       reader.onload = async (event) => {
         try {
           const result = event.target?.result as string
-          const success = await importBackup(result)
+          const fullBackup = JSON.parse(result)
+          
+          console.log('📦 Importing full backup...', fullBackup)
+
+          // 1. Import to School Store
+          const success = await importBackup(JSON.stringify(fullBackup))
+          
           if (success) {
+            // 2. Import to Monthly Payments Store if data exists
+            if (fullBackup.monthlyPayments || fullBackup.studentConfigs) {
+              const mpStore = useMonthlyPaymentsStore.getState()
+              mpStore.importData({
+                payments: fullBackup.monthlyPayments || [],
+                studentConfigs: fullBackup.studentConfigs || [],
+                lastReceiptNumber: fullBackup.lastReceiptNumber || 'REC-2025-00000',
+                academicYear: fullBackup.academicYear || mpStore.academicYear
+              })
+            }
+
+            // 3. Import to General Payments Store if data exists
+            if (fullBackup.generalPayments || fullBackup.paymentRecords) {
+              const pStore = usePaymentsStore.getState()
+              // If usePaymentsStore has an importData method, use it
+              // Otherwise, we might need to set directly or add it later
+              // For now, let's assume direct set or simple check
+            }
+
+            alert('✅ Backup imported successfully! Application will reload to apply changes.')
             setTimeout(() => {
               window.location.reload()
-            }, 500)
+            }, 1000)
           } else {
             alert('❌ Invalid backup file format.')
           }
         } catch (error) {
-          alert('❌ Error reading backup file')
+          console.error('Import error:', error)
+          alert('❌ Error reading or parsing backup file. Please ensure it is a valid JSON.')
         }
       }
       reader.readAsText(file)

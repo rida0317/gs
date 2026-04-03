@@ -161,6 +161,9 @@ interface MonthlyPaymentsActions {
   setSynced: (synced: boolean) => void
   setLastSyncTime: (time: string | null) => void
 
+  // Import
+  importData: (data: Partial<MonthlyPaymentsState>) => void
+
   // State
   setSelectedClassId: (classId: string) => void
   setSelectedStudentId: (studentId: string | null) => void
@@ -567,6 +570,14 @@ export const useMonthlyPaymentsStore = create<MonthlyPaymentsStore>()(
 
       setLastSyncTime: (time) => {
         set({ lastSyncTime: time })
+      },
+
+      importData: (data) => {
+        set((state) => ({
+          ...state,
+          ...data,
+          isLoading: false
+        }))
       }
     }),
     {
