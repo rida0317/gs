@@ -268,12 +268,18 @@ const SettingsExtended: React.FC = () => {
             // 3. Import to General Payments Store if data exists
             if (fullBackup.generalPayments || fullBackup.paymentRecords) {
               const pStore = usePaymentsStore.getState()
-              // If usePaymentsStore has an importData method, use it
-              // Otherwise, we might need to set directly or add it later
               // For now, let's assume direct set or simple check
             }
 
-            alert('✅ Backup imported successfully! Application will reload to apply changes.')
+            // 4. Final Sync to Supabase
+            try {
+              alert('🔄 Syncing data to Cloud (Supabase)... Please wait.')
+              await syncAllToSupabase()
+            } catch (err) {
+              console.error('Final sync failed:', err)
+            }
+
+            alert('✅ Backup imported and synced successfully! Application will reload.')
             setTimeout(() => {
               window.location.reload()
             }, 1000)

@@ -81,6 +81,7 @@ interface SchoolStore extends SchoolData {
   // Backup/Restore
   exportBackup: () => string
   importBackup: (backupData: string) => boolean
+  syncAllToSupabase: () => Promise<void>
   _autoBackup: () => void
   forceSave: () => void
 }
@@ -500,6 +501,76 @@ export const useSchoolStore = create<SchoolStore>()(
         const currentSchoolId = useSchoolPlatformStore.getState().currentSchoolId || DEFAULT_SCHOOL_ID
         const { data } = await supabase.from('levels').insert([{ school_id: currentSchoolId, name, is_active: true }]).select().single()
         if (data) set((state) => ({ customLevels: [...state.customLevels, { id: data.id, name }] }))
+      },
+
+      syncAllToSupabase: async () => {
+        const state = get()
+        const currentSchoolId = useSchoolPlatformStore.getState().currentSchoolId || DEFAULT_SCHOOL_ID
+        const academicYear = state.academicYear
+        
+        console.log('🚀 Starting bulk sync to Supabase...')
+
+        try {
+          // 1. Sync Teachers
+          if (state.teachers.length > 0) {
+            const teachersToSync = state.teachers.map(t => ({
+              school_id: currentSchoolId,
+              full_name: t.name,
+              max_hours_per_week: t.maxHoursPerWeek,
+              subjects: t.subjects,
+              levels: t.levels,
+              is_vacataire: t.isVacataire,
+              availability: t.availability || {},
+              is_active: true
+            }))
+            await supabase.from('teachers').upsert(teachersToSync, { onConflict: 'school_id,full_name' })
+          }
+
+          // 2. Sync Classes
+          if (state.classes.length > 0) {
+            const classesToSync = state.classes.map(c => ({
+              school_id: currentSchoolId,
+              name: c.name,
+              level: c.level,
+              room_id: c.room_id,
+              teacher_id: c.teacher_id,
+              max_students: c.max_students,
+              subjects: c.subjects,
+              schedule: c.schedule || {},
+              is_active: true
+            }))
+            await supabase.from('classes').upsert(classesToSync, { onConflict: 'school_id,name' })
+          }
+
+          // 3. Sync Students
+          if (state.students.length > 0) {
+            const studentsToSync = state.students.map(s => ({
+              school_id: currentSchoolId,
+              full_name: s.name,
+              class_id: s.classId || null,
+              code_massar: s.codeMassar || (s as any).code_massar || null,
+              parent_phone: s.parentPhone || null,
+              academic_year: academicYear,
+              is_active: true
+            }))
+            await supabase.from('students').upsert(studentsToSync, { onConflict: 'school_id,full_name,academic_year' })
+          }
+
+          // 4. Sync Subjects
+          if (state.customSubjects.length > 0) {
+            const subjectsToSync = state.customSubjects.map(s => ({
+              school_id: currentSchoolId,
+              name: s.name,
+              is_active: true
+            }))
+            await supabase.from('subjects').upsert(subjectsToSync, { onConflict: 'school_id,name' })
+          }
+
+          console.log('✅ Bulk sync completed!')
+        } catch (error) {
+          console.error('❌ Bulk sync failed:', error)
+          throw error
+        }
       },
 
       forceSave: () => {
