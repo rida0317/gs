@@ -351,48 +351,51 @@ const SettingsExtended: React.FC = () => {
 
   return (
     <div className="settings-extended">
-      {/* Sync Status Overlay */}
-      {syncCountdown !== null && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.9)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          color: 'white',
-          textAlign: 'center',
-          padding: '20px'
-        }}>
-          <div style={{ 
-            width: '80px', 
-            height: '80px', 
-            border: '8px solid #333', 
-            borderTop: '8px solid var(--primary-color, #4f46e5)', 
-            borderRadius: '50%', 
-            animation: 'spin 1s linear infinite',
-            marginBottom: '2rem'
-          }}></div>
-          <h2 style={{ fontSize: '1.8rem', marginBottom: '1rem' }}>{syncStatus}</h2>
-          <div style={{ fontSize: '4rem', fontWeight: 'bold', color: 'var(--primary-color, #4f46e5)' }}>
-            {syncCountdown}s
-          </div>
-          <p style={{ marginTop: '1.5rem', color: '#888', maxWidth: '400px' }}>
-            Uploading your local database to Supabase Cloud. Please do not refresh or close this page.
-          </p>
-          <style>{`
-            @keyframes spin {
-              0% { transform: rotate(0deg); }
-              100% { transform: rotate(360deg); }
-            }
-          `}</style>
+      {/* Sync Status Overlay - Using visibility to avoid DOM range errors */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999,
+        color: 'white',
+        textAlign: 'center',
+        padding: '20px',
+        transition: 'all 0.3s ease-in-out',
+        opacity: syncCountdown !== null ? 1 : 0,
+        visibility: syncCountdown !== null ? 'visible' : 'hidden',
+        pointerEvents: syncCountdown !== null ? 'all' : 'none'
+      }}>
+        <div className="sync-spinner" style={{ 
+          width: '80px', 
+          height: '80px', 
+          border: '8px solid #333', 
+          borderTop: '8px solid var(--primary-color, #4f46e5)', 
+          borderRadius: '50%', 
+          animation: 'sync-spin 1s linear infinite',
+          marginBottom: '2rem'
+        }}></div>
+        <h2 style={{ fontSize: '1.8rem', marginBottom: '1rem' }}>{syncStatus}</h2>
+        <div style={{ fontSize: '4rem', fontWeight: 'bold', color: 'var(--primary-color, #4f46e5)' }}>
+          {syncCountdown ?? 0}s
         </div>
-      )}
+        <p style={{ marginTop: '1.5rem', color: '#888', maxWidth: '400px' }}>
+          Uploading your local database to Supabase Cloud. Please do not refresh or close this page.
+        </p>
+        <style>{`
+          @keyframes sync-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+      
       <div className="page-header">
         <h1 className="page-title">⚙️ {t('nav.settings')}</h1>
         <p className="page-subtitle">Configure your application</p>
