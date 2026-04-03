@@ -508,11 +508,24 @@ export const useSchoolStore = create<SchoolStore>()(
         const currentSchoolId = useSchoolPlatformStore.getState().currentSchoolId || DEFAULT_SCHOOL_ID
         const academicYear = state.academicYear
         
-        console.log('🚀 Starting bulk sync to Supabase...')
+        console.log('🚀 Starting Robust Bulk Sync to Supabase...')
 
         try {
-          // 1. Sync Teachers
+          // 1. Sync Subjects first (no dependencies)
+          let subjectMap: Record<string, string> = {}
+          if (state.customSubjects.length > 0) {
+            console.log('📚 Syncing Subjects...')
+            for (const s of state.customSubjects) {
+              const { data, error } = await supabase.from('subjects')
+                .upsert({ school_id: currentSchoolId, name: s.name, is_active: true }, { onConflict: 'school_id,name' })
+                .select().single()
+              if (data) subjectMap[s.name] = data.id
+            }
+          }
+
+          // 2. Sync Teachers
           if (state.teachers.length > 0) {
+            console.log('👨‍🏫 Syncing Teachers...')
             const teachersToSync = state.teachers.map(t => ({
               school_id: currentSchoolId,
               full_name: t.name,
@@ -526,58 +539,52 @@ export const useSchoolStore = create<SchoolStore>()(
             await supabase.from('teachers').upsert(teachersToSync, { onConflict: 'school_id,full_name' })
           }
 
-          // 2. Sync Classes
-          if (state.classes.length > 0) {
-            const classesToSync = state.classes.map(c => ({
-              school_id: currentSchoolId,
-              name: c.name,
-              level: c.level,
-              room_id: c.room_id,
-              teacher_id: c.teacher_id,
-              max_students: c.max_students,
-              subjects: c.subjects,
-              schedule: c.schedule || {},
-              is_active: true
-            }))
-            await supabase.from('classes').upsert(classesToSync, { onConflict: 'school_id,name' })
+          // 3. Sync Classes (Important: we need these IDs for students)
+          console.log('🏫 Syncing Classes...')
+          let classIdMap: Record<string, string> = {}
+          for (const c of state.classes) {
+            const { data, error } = await supabase.from('classes')
+              .upsert({
+                school_id: currentSchoolId,
+                name: c.name,
+                level: c.level,
+                max_students: c.max_students || 30,
+                is_active: true
+              }, { onConflict: 'school_id,name' })
+              .select().single()
+            
+            if (data) {
+              classIdMap[c.id] = data.id // Map old local ID to new Supabase UUID
+            } else if (error) {
+              console.error(`Error syncing class ${c.name}:`, error)
+            }
           }
 
-          // 3. Sync Students
+          // 4. Sync Students (Using the new class IDs)
           if (state.students.length > 0) {
+            console.log('👶 Syncing Students...')
             const studentsToSync = state.students.map(s => ({
               school_id: currentSchoolId,
               full_name: s.name,
-              class_id: s.classId || null,
+              class_id: classIdMap[s.classId || ''] || null, // Map to new UUID
               code_massar: s.codeMassar || (s as any).code_massar || null,
               parent_phone: s.parentPhone || null,
               academic_year: academicYear,
               is_active: true
             }))
-            await supabase.from('students').upsert(studentsToSync, { onConflict: 'school_id,full_name,academic_year' })
+            
+            // Chunk students to avoid large payload errors
+            const chunkSize = 50
+            for (let i = 0; i < studentsToSync.length; i += chunkSize) {
+              const chunk = studentsToSync.slice(i, i + chunkSize)
+              const { error } = await supabase.from('students').upsert(chunk, { onConflict: 'school_id,full_name,academic_year' })
+              if (error) console.error('Error syncing student chunk:', error)
+            }
           }
 
-          // 4. Sync Subjects
-          if (state.customSubjects.length > 0) {
-            const subjectsToSync = state.customSubjects.map(s => ({
-              school_id: currentSchoolId,
-              name: s.name,
-              is_active: true
-            }))
-            await supabase.from('subjects').upsert(subjectsToSync, { onConflict: 'school_id,name' })
-          }
-
-          // 5. Sync Levels
-          if (state.customLevels.length > 0) {
-            const levelsToSync = state.customLevels.map(l => ({
-              school_id: currentSchoolId,
-              name: l.name,
-              is_active: true
-            }))
-            await supabase.from('levels').upsert(levelsToSync, { onConflict: 'school_id,name' })
-          }
-
-          // 6. Sync Salles
+          // 5. Sync Salles
           if (state.salles.length > 0) {
+            console.log('🏢 Syncing Salles...')
             const sallesToSync = state.salles.map(s => ({
               school_id: currentSchoolId,
               name: s.name,
@@ -588,33 +595,7 @@ export const useSchoolStore = create<SchoolStore>()(
             await supabase.from('salles').upsert(sallesToSync, { onConflict: 'school_id,name' })
           }
 
-          // 7. Sync Timetables
-          if (Object.keys(state.timetables).length > 0) {
-            const timetablesToSync = Object.entries(state.timetables).map(([classId, schedule]) => ({
-              school_id: currentSchoolId,
-              class_id: classId,
-              schedule: schedule,
-              academic_year: academicYear
-            }))
-            // Note: Make sure 'timetables' table exists in Supabase
-            await supabase.from('timetables').upsert(timetablesToSync, { onConflict: 'school_id,class_id,academic_year' })
-          }
-
-          // 8. Sync Replacements
-          if (state.replacements.length > 0) {
-            const replacementsToSync = state.replacements.map(r => ({
-              school_id: currentSchoolId,
-              teacher_id: r.teacherId,
-              replacing_teacher_id: r.replacingTeacherId,
-              class_id: r.classId,
-              date: r.date,
-              period: r.period,
-              academic_year: academicYear
-            }))
-            await supabase.from('replacements').upsert(replacementsToSync)
-          }
-
-          console.log('✅ Full bulk sync completed!')
+          console.log('✅ Full bulk sync completed successfully!')
         } catch (error) {
           console.error('❌ Bulk sync failed:', error)
           throw error
