@@ -57,7 +57,7 @@ export const validatePassword = (password: string): PasswordValidationResult => 
   }
 
   // Check for special characters - NOT ALLOWED
-  if (/[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\;'`~]/.test(password)) {
+  if (/[!@#$%^&*(),.?":{}|<>_\-+=[\\]\\;'`~]/.test(password)) {
     errors.push('Password can only contain letters and numbers (no special characters)');
   }
 

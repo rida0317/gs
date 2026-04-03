@@ -238,7 +238,7 @@ export const useGamificationStore = create<GamificationState & GamificationActio
 
       getLeaderboard: (classId, limit = 10) => {
         const studentPoints = Array.from(get().studentPoints.values())
-        let filtered = classId ? studentPoints.filter(s => s.classId === classId) : studentPoints
+        const filtered = classId ? studentPoints.filter(s => s.classId === classId) : studentPoints
         const sorted = filtered.sort((a, b) => b.totalPoints - a.totalPoints)
 
         return sorted.slice(0, limit).map((student, index) => ({

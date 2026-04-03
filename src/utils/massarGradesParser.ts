@@ -249,7 +249,7 @@ function extractClassInfo(rows: any[][], headerRowIndex: number): { classId?: st
     
     // Try to extract subject
     if (rowText.includes('المادة') || rowText.includes('مادة')) {
-      info.subject = rowText.match(/المادة\s*[:\-]?\s*([^\s,;]+)/)?.[1]?.trim()
+      info.subject = rowText.match(/المادة\s*[:-]?\s*([^\s,;]+)/)?.[1]?.trim()
     }
     
     // Try to extract exam type
@@ -488,14 +488,14 @@ export function formatDate(dateStr: string): string {
   if (!dateStr) return ''
   
   // Try DD/MM/YYYY format (common in Morocco)
-  const ddmmyyyy = dateStr.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})/)
+  const ddmmyyyy = dateStr.match(/(\d{1,2})[/. -](\d{1,2})[/. -](\d{4})/)
   if (ddmmyyyy) {
     const [, day, month, year] = ddmmyyyy
     return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
   }
   
   // Try YYYY-MM-DD format
-  const yyyymmdd = dateStr.match(/(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})/)
+  const yyyymmdd = dateStr.match(/(\d{4})[/. -](\d{1,2})[/. -](\d{1,2})/)
   if (yyyymmdd) {
     const [, year, month, day] = yyyymmdd
     return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`

@@ -424,7 +424,7 @@ class BackupService {
     const now = new Date()
     const [hours, minutes] = this.settings.autoBackupTime.split(':').map(Number)
     
-    let nextBackup = new Date(now)
+    const nextBackup = new Date(now)
     nextBackup.setHours(hours, minutes, 0, 0)
 
     // If time already passed today, schedule for next period

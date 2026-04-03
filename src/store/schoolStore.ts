@@ -511,7 +511,7 @@ export const useSchoolStore = create<SchoolStore>()(
 
       exportBackup: () => JSON.stringify(get()),
       importBackup: (backupData) => { try { set(JSON.parse(backupData)); return true } catch { return false } },
-      _autoBackup: () => { try { localStorage.setItem(BACKUP_KEY, JSON.stringify({ data: get(), timestamp: new Date().toISOString() })) } catch {} }
+      _autoBackup: () => { try { localStorage.setItem(BACKUP_KEY, JSON.stringify({ data: get(), timestamp: new Date().toISOString() })) } catch (e) { /* ignore error */ } }
     }),
     {
       name: STORE_KEY,

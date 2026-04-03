@@ -83,7 +83,7 @@ class TwoFAService {
   private verifyCode(code: string, secret: string): boolean {
     const currentTime = Date.now()
     const timeStep = 30 * 1000
-    for (let offset of [-1, 0, 1]) {
+    for (const offset of [-1, 0, 1]) {
       const testTime = currentTime + (offset * timeStep)
       const generatedCode = this.generateTOTP(secret, testTime)
       if (code === generatedCode) return true

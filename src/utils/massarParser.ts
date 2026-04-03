@@ -442,14 +442,14 @@ function formatDate(value: any): string | undefined {
     const trimmedValue = value.trim();
 
     // Format: YYYY/MM/DD or YYYY-MM-DD (e.g., 2010/06/08, 2010-06-08)
-    const yyyymmddMatch = trimmedValue.match(/^(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})$/);
+    const yyyymmddMatch = trimmedValue.match(/^(\d{4})[/. -](\d{1,2})[/. -](\d{1,2})$/);
     if (yyyymmddMatch) {
       const [, year, month, day] = yyyymmddMatch;
       date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
     }
     // Format: DD/MM/YYYY or DD-MM-YYYY (e.g., 08/06/2010, 08-06-2010)
     else {
-      const ddmmyyyyMatch = trimmedValue.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
+      const ddmmyyyyMatch = trimmedValue.match(/^(\d{1,2})[/. -](\d{1,2})[/. -](\d{4})$/);
       if (ddmmyyyyMatch) {
         const [, day, month, year] = ddmmyyyyMatch;
         date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));

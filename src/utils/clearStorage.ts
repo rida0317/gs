@@ -40,7 +40,7 @@ export function clearAllStorage() {
 
 // Auto-run if called directly
 if (typeof window !== 'undefined') {
-  (window as any).clearAppStorage = clearAppStorage
-  (window as any).clearAllStorage = clearAllStorage
-  console.log('💡 Storage clear utilities loaded. Run clearAppStorage() or clearAllStorage() in console.')
+  (window as any).clearAppStorage = clearAppStorage;
+  (window as any).clearAllStorage = clearAllStorage;
+  console.log('💡 Storage clear utilities loaded. Run clearAppStorage() or clearAllStorage() in console.');
 }
