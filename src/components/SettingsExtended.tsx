@@ -388,12 +388,6 @@ const SettingsExtended: React.FC = () => {
         <p style={{ marginTop: '1.5rem', color: '#888', maxWidth: '400px' }}>
           Uploading your local database to Supabase Cloud. Please do not refresh or close this page.
         </p>
-        <style>{`
-          @keyframes sync-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
       </div>
       
       <div className="page-header">

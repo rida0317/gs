@@ -1008,3 +1008,9 @@ input:checked + .slider:before {
   color: var(--text-color);
   border: 1px solid var(--border-color);
 }
+
+ @ k e y f r a m e s   s y n c - s p i n   { 
+     0 %   {   t r a n s f o r m :   r o t a t e ( 0 d e g ) ;   } 
+     1 0 0 %   {   t r a n s f o r m :   r o t a t e ( 3 6 0 d e g ) ;   } 
+ }  
+ 
