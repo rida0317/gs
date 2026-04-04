@@ -2,18 +2,11 @@
 
 // Categories principales pour école marocaine
 export type StockCategory =
-  // Nouvelles catégories demandées
-  | 'Ménage'              // Cleaning products
   | 'Hygiène'             // Soap, sanitizer, hygiene
-  | 'Fournitures Scolaires'  // Pens, paper, toner
-  // Catégories existantes
-  | 'Papeterie'
-  | 'Fournitures'
-  | 'Pédagogique'
+  | 'Produit de ménage'   // Cleaning products (Javel, balai...)
+  | 'Fournitures scolaires' // Pens, paper, toner, notebooks
   | 'Sport'
-  | 'Nettoyage'
-  | 'Bureau'
-  | 'Arts'
+  | 'Pédagogique'
   | 'Informatique'
   | 'Autre';
 

@@ -603,16 +603,16 @@
   letter-spacing: 0.03em;
 }
 
-.category-badge.cat-ménage,
-.category-badge.cat-menage {
-  background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
-}
-
 .category-badge.cat-hygiène,
 .category-badge.cat-hygiene {
   background: rgba(16, 185, 129, 0.1);
   color: #10b981;
+}
+
+.category-badge.cat-produit-de-ménage,
+.category-badge.cat-produit-de-menage {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
 }
 
 .category-badge.cat-fournitures-scolaires {

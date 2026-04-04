@@ -45,13 +45,11 @@ export const stockTranslations: Record<'fr' | 'ar' | 'en', StockTranslation> = {
     'stock.notes': 'Notes',
 
     // Catégories
-    'stock.category.Papeterie': 'Papeterie',
-    'stock.category.Fournitures': 'Fournitures',
-    'stock.category.Pédagogique': 'Pédagogique',
+    'stock.category.Hygiène': 'Hygiène',
+    'stock.category.Produit de ménage': 'Produit de ménage',
+    'stock.category.Fournitures scolaires': 'Fournitures scolaires',
     'stock.category.Sport': 'Sport',
-    'stock.category.Nettoyage': 'Nettoyage',
-    'stock.category.Bureau': 'Bureau',
-    'stock.category.Arts': 'Arts',
+    'stock.category.Pédagogique': 'Pédagogique',
     'stock.category.Informatique': 'Informatique',
     'stock.category.Autre': 'Autre',
 
@@ -164,7 +162,7 @@ export const stockTranslations: Record<'fr' | 'ar' | 'en', StockTranslation> = {
     'stock.title': 'إدارة المخزون',
     'stock.subtitle': 'إدارة المواد الاستهلاكية ومعدات المدرسة',
     'stock.dashboard': 'لوحة التحكم',
-    'stock.items': 'المقالات',
+    'stock.items': 'المواد',
     'stock.transactions': 'المعاملات',
     'stock.returns': 'الإرجاعات',
     'stock.suppliers': 'الموردون',
@@ -172,12 +170,12 @@ export const stockTranslations: Record<'fr' | 'ar' | 'en', StockTranslation> = {
     'stock.reports': 'التقارير',
 
     // Actions
-    'stock.addItem': 'إضافة مقال',
+    'stock.addItem': 'إضافة مادة',
     'stock.addTransaction': 'معاملة جديدة',
     'stock.addReturn': 'إرجاع جديد',
     'stock.addSupplier': 'إضافة مورد',
-    'stock.editItem': 'تعديل المقال',
-    'stock.deleteItem': 'حذف المقال',
+    'stock.editItem': 'تعديل المادة',
+    'stock.deleteItem': 'حذف المادة',
     'stock.exportReport': 'تصدير التقرير',
 
     // Colonnes
@@ -198,13 +196,11 @@ export const stockTranslations: Record<'fr' | 'ar' | 'en', StockTranslation> = {
     'stock.notes': 'ملاحظات',
 
     // Catégories
-    'stock.category.Papeterie': 'القرطاسية',
-    'stock.category.Fournitures': 'اللوازم',
-    'stock.category.Pédagogique': 'بيداغوجي',
+    'stock.category.Hygiène': 'النظافة',
+    'stock.category.Produit de ménage': 'مواد التنظيف',
+    'stock.category.Fournitures scolaires': 'اللوازم المدرسية',
     'stock.category.Sport': 'الرياضة',
-    'stock.category.Nettoyage': 'التنظيف',
-    'stock.category.Bureau': 'المكتب',
-    'stock.category.Arts': 'الفنون',
+    'stock.category.Pédagogique': 'بيداغوجي',
     'stock.category.Informatique': 'المعلوماتية',
     'stock.category.Autre': 'أخرى',
 
@@ -249,7 +245,7 @@ export const stockTranslations: Record<'fr' | 'ar' | 'en', StockTranslation> = {
     'stock.alert.message': '{item}: {quantity} {unit} متبقية',
 
     // Dashboard
-    'stock.dashboard.totalItems': 'إجمالي المقالات',
+    'stock.dashboard.totalItems': 'إجمالي المواد',
     'stock.dashboard.totalValue': 'قيمة المخزون',
     'stock.dashboard.lowStock': 'مخزون منخفض',
     'stock.dashboard.entries': 'المداخل',
@@ -259,7 +255,7 @@ export const stockTranslations: Record<'fr' | 'ar' | 'en', StockTranslation> = {
     'stock.dashboard.topConsumed': 'الأكثر استهلاكاً',
 
     // Formulaire
-    'stock.form.itemName': 'اسم المقال',
+    'stock.form.itemName': 'اسم المادة',
     'stock.form.selectCategory': 'اختر فئة',
     'stock.form.selectUnit': 'اختر وحدة',
     'stock.form.initialQuantity': 'الكمية الأولية',
@@ -268,7 +264,7 @@ export const stockTranslations: Record<'fr' | 'ar' | 'en', StockTranslation> = {
     'stock.form.enterReason': 'أدخل السبب',
     'stock.form.transactionType': 'نوع المعاملة',
     'stock.form.quantityMoved': 'الكمية',
-    'stock.form.selectItem': 'اختر مقالاً',
+    'stock.form.selectItem': 'اختر مادة',
     'stock.form.returnCondition': 'حالة الإرجاع',
     'stock.form.condition.excellent': 'ممتاز',
     'stock.form.condition.good': 'جيد',
@@ -285,15 +281,15 @@ export const stockTranslations: Record<'fr' | 'ar' | 'en', StockTranslation> = {
     'stock.supplier.city': 'المدينة',
 
     // Messages
-    'stock.message.itemAdded': 'تمت إضافة المقال بنجاح',
-    'stock.message.itemUpdated': 'تم تعديل المقال بنجاح',
-    'stock.message.itemDeleted': 'تم حذف المقال بنجاح',
+    'stock.message.itemAdded': 'تمت إضافة المادة بنجاح',
+    'stock.message.itemUpdated': 'تم تعديل المادة بنجاح',
+    'stock.message.itemDeleted': 'تم حذف المادة بنجاح',
     'stock.message.transactionAdded': 'تم تسجيل المعاملة',
     'stock.message.returnAdded': 'تم تسجيل الإرجاع',
-    'stock.message.confirmDelete': 'هل أنت متأكد من حذف هذا المقال؟',
+    'stock.message.confirmDelete': 'هل أنت متأكد من حذف هذه المادة؟',
 
     // Recherche & Filtres
-    'stock.search': 'البحث عن مقال...',
+    'stock.search': 'البحث عن مادة...',
     'stock.filterByCategory': 'تصفية حسب الفئة',
     'stock.allCategories': 'جميع الفئات',
     'stock.showInactive': 'إظهار غير النشطين',
@@ -351,13 +347,11 @@ export const stockTranslations: Record<'fr' | 'ar' | 'en', StockTranslation> = {
     'stock.notes': 'Notes',
 
     // Catégories
-    'stock.category.Papeterie': 'Stationery',
-    'stock.category.Fournitures': 'Supplies',
-    'stock.category.Pédagogique': 'Educational',
+    'stock.category.Hygiène': 'Hygiene',
+    'stock.category.Produit de ménage': 'Cleaning Products',
+    'stock.category.Fournitures scolaires': 'School Supplies',
     'stock.category.Sport': 'Sports',
-    'stock.category.Nettoyage': 'Cleaning',
-    'stock.category.Bureau': 'Office',
-    'stock.category.Arts': 'Arts',
+    'stock.category.Pédagogique': 'Educational',
     'stock.category.Informatique': 'IT',
     'stock.category.Autre': 'Other',
 

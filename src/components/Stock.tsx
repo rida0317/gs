@@ -44,7 +44,7 @@ const Stock: React.FC = () => {
   const [itemForm, setItemForm] = useState({
     name: '',
     description: '',
-    category: 'Fournitures Scolaires' as StockCategory,
+    category: 'Fournitures scolaires' as StockCategory,
     type: 'Consommable' as ProductType,
     quantity: 0,
     minQuantity: 5,
@@ -76,17 +76,12 @@ const Stock: React.FC = () => {
 
   // Categories - Principales pour école marocaine
   const categories: StockCategory[] = [
-    'Ménage',
     'Hygiène',
-    'Fournitures Scolaires',
-    'Papeterie',
-    'Fournitures',
-    'Pédagogique',
+    'Produit de ménage',
+    'Fournitures scolaires',
     'Sport',
-    'Nettoyage',
-    'Bureau',
+    'Pédagogique',
     'Informatique',
-    'Arts',
     'Autre',
   ]
 
