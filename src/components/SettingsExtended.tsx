@@ -183,6 +183,17 @@ const SettingsExtended: React.FC = () => {
                 lastReceiptNumber: fullBackup.lastReceiptNumber || 'REC-2025-00000',
                 academicYear: fullBackup.academicYear || mpStore.academicYear
               })
+              
+              // NEW: Sync Monthly Payments to Supabase
+              try {
+                const mpToSync = (fullBackup.monthlyPayments || []).map((p: any) => ({
+                  ...p,
+                  school_id: useSchoolPlatformStore.getState().currentSchoolId || '00000000-0000-0000-0000-000000000001'
+                }))
+                if (mpToSync.length > 0) {
+                  await supabase.from('monthly_payments').upsert(mpToSync)
+                }
+              } catch (e) { console.error('Monthly payments sync failed', e) }
             }
 
             try {

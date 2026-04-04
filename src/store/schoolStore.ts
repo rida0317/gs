@@ -595,7 +595,34 @@ export const useSchoolStore = create<SchoolStore>()(
             await supabase.from('salles').upsert(sallesToSync, { onConflict: 'school_id,name' })
           }
 
-          console.log('✅ Full bulk sync completed successfully!')
+          // 6. Sync Timetables
+          if (state.timetables && Object.keys(state.timetables).length > 0) {
+            console.log('📅 Syncing Timetables...')
+            const timetablesToSync = Object.entries(state.timetables).map(([classId, schedule]) => ({
+              school_id: currentSchoolId,
+              class_id: classIdMap[classId] || classId,
+              schedule: schedule,
+              academic_year: academicYear
+            }))
+            await supabase.from('timetables').upsert(timetablesToSync, { onConflict: 'school_id,class_id,academic_year' })
+          }
+
+          // 7. Sync Replacements
+          if (state.replacements && state.replacements.length > 0) {
+            console.log('🔄 Syncing Replacements...')
+            const replacementsToSync = state.replacements.map(r => ({
+              school_id: currentSchoolId,
+              teacher_id: r.teacherId,
+              replacing_teacher_id: r.replacingTeacherId,
+              class_id: classIdMap[r.classId] || r.classId,
+              date: r.date,
+              period: r.period,
+              academic_year: academicYear
+            }))
+            await supabase.from('replacements').upsert(replacementsToSync)
+          }
+
+          console.log('✅ Full database sync completed!')
         } catch (error) {
           console.error('❌ Bulk sync failed:', error)
           throw error
