@@ -59,7 +59,7 @@
 .subject-name {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--text-color);
+  color: var(--text-color) !important;
   margin: 0;
   word-break: break-word;
   overflow-wrap: break-word;
