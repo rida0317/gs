@@ -276,13 +276,37 @@ export const useSchoolStore = create<SchoolStore>()(
 
       addClass: async (schoolClass) => {
         const currentSchoolId = useSchoolPlatformStore.getState().currentSchoolId || DEFAULT_SCHOOL_ID
-        const { data } = await supabase.from('classes').insert([{
-          school_id: currentSchoolId, name: schoolClass.name, level: schoolClass.level,
-          room_id: schoolClass.room_id, teacher_id: schoolClass.teacher_id,
-          max_students: schoolClass.max_students, subjects: schoolClass.subjects,
-          schedule: schoolClass.schedule || {}, is_active: true
+        const { data, error } = await supabase.from('classes').insert([{
+          school_id: currentSchoolId,
+          name: schoolClass.name,
+          level: schoolClass.level,
+          room_id: (schoolClass as any).roomId || null,
+          teacher_id: (schoolClass as any).teacherId || null,
+          max_students: (schoolClass as any).maxStudents || 40,
+          subjects: schoolClass.subjects || [],
+          schedule: (schoolClass as any).schedule || [],
+          is_active: true
         }]).select().single()
-        if (data) set((state) => ({ classes: [...state.classes, { ...schoolClass, id: data.id }] }))
+
+        if (error) {
+          console.error('❌ addClass error:', error)
+          throw error
+        }
+
+        if (data) {
+          set((state) => ({
+            classes: [...state.classes, {
+              id: data.id,
+              name: data.name,
+              level: data.level,
+              roomId: data.room_id,
+              teacherId: data.teacher_id,
+              maxStudents: data.max_students,
+              subjects: data.subjects || [],
+              schedule: data.schedule || []
+            }]
+          }))
+        }
       },
 
       updateClass: async (id, schoolClass) => {
