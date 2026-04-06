@@ -276,13 +276,11 @@ export const useSchoolStore = create<SchoolStore>()(
 
       addClass: async (schoolClass) => {
         const currentSchoolId = useSchoolPlatformStore.getState().currentSchoolId || DEFAULT_SCHOOL_ID
-        
-        // Only send fields that exist in the Supabase classes table
+
         const classData: any = {
           school_id: currentSchoolId,
           name: schoolClass.name,
           level: schoolClass.level,
-          subjects: schoolClass.subjects || [],
           is_active: true
         }
 
@@ -309,8 +307,7 @@ export const useSchoolStore = create<SchoolStore>()(
         const updates: any = {}
         if (schoolClass.name) updates.name = schoolClass.name
         if (schoolClass.level) updates.level = schoolClass.level
-        if (schoolClass.subjects) updates.subjects = schoolClass.subjects
-        
+
         const { error } = await supabase.from('classes').update(updates).eq('id', id)
         
         if (error) {

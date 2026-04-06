@@ -228,10 +228,13 @@ class CloudSyncService {
     if (!this.schoolId) return null
 
     try {
+      // Exclude subjects field since it doesn't exist in Supabase
+      const { subjects, ...classDataWithoutSubjects } = schoolClass as any
+      
       const { data, error } = await supabase
         .from('classes')
         .insert([{
-          ...schoolClass,
+          ...classDataWithoutSubjects,
           school_id: this.schoolId
         }])
         .select()
@@ -251,10 +254,13 @@ class CloudSyncService {
     if (!this.schoolId) return false
 
     try {
+      // Exclude subjects field since it doesn't exist in Supabase
+      const { subjects, ...updatesWithoutSubjects } = updates as any
+      
       const { error } = await supabase
         .from('classes')
         .update({
-          ...updates,
+          ...updatesWithoutSubjects,
           updated_at: new Date().toISOString()
         })
         .eq('id', id)
