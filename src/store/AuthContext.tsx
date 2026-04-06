@@ -204,6 +204,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Profile is auto-created by database trigger (handle_new_user)
       // Status is 'active' by default - instant access!
       console.log('✅ User signed up, profile will be created with active status')
+      
+      // Auto-login after signup (no email confirmation needed)
+      if (data.session) {
+        setUser(data.user)
+        await loadUserData(data.user.id, email)
+        console.log('✅ Auto-login successful - user redirected to app')
+      }
     }
   }
 

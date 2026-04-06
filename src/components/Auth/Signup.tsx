@@ -52,18 +52,12 @@ const Signup: React.FC = () => {
       await signup(email, password, displayName, role)
       console.log('✅ Signup successful - account created')
 
-      // Direct login after signup - no waiting
+      // Direct redirect to dashboard after signup (auto-login handled in AuthContext)
       setSuccessMessage('✅ Compte créé avec succès! Redirection...')
-      
-      // Auto-login after 1 second
+
       setTimeout(() => {
-        navigate('/login', { 
-          state: { 
-            autoLoginEmail: email,
-            message: '✅ Compte créé! Connectez-vous avec vos identifiants.'
-          }
-        })
-      }, 1000)
+        navigate('/dashboard', { replace: true })
+      }, 1500)
     } catch (err: any) {
       setError(err.message || 'Failed to create account')
     } finally {
