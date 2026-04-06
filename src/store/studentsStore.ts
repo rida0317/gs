@@ -224,8 +224,8 @@ export const useStudentsStore = create<StudentsStore>()(
 // Selector hooks for better performance
 export const useStudents = () => {
   const allStudents = useStudentsStore((state) => state.students)
-  const academicYear = useSchoolStore((state) => state.academicYear)
-  return allStudents.filter(s => s.academicYear === academicYear)
+  // Show all students regardless of academic year
+  return allStudents
 }
 export const useSelectedStudent = () => {
   const selectedStudentId = useStudentsStore((state) => state.selectedStudentId)
