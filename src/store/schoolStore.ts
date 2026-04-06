@@ -276,17 +276,22 @@ export const useSchoolStore = create<SchoolStore>()(
 
       addClass: async (schoolClass) => {
         const currentSchoolId = useSchoolPlatformStore.getState().currentSchoolId || DEFAULT_SCHOOL_ID
-        const { data, error } = await supabase.from('classes').insert([{
+        
+        // Only send fields that exist in the Supabase classes table
+        const classData: any = {
           school_id: currentSchoolId,
           name: schoolClass.name,
           level: schoolClass.level,
-          room_id: (schoolClass as any).roomId || null,
-          teacher_id: (schoolClass as any).teacherId || null,
-          max_students: (schoolClass as any).maxStudents || 40,
           subjects: schoolClass.subjects || [],
-          schedule: (schoolClass as any).schedule || [],
           is_active: true
-        }]).select().single()
+        }
+
+        // Only add room_id if it has a value (room_id column exists in DB)
+        if ((schoolClass as any).roomId) {
+          classData.room_id = (schoolClass as any).roomId
+        }
+
+        const { data, error } = await supabase.from('classes').insert([classData]).select().single()
 
         if (error) {
           console.error('❌ addClass error:', error)
@@ -300,10 +305,7 @@ export const useSchoolStore = create<SchoolStore>()(
               name: data.name,
               level: data.level,
               roomId: data.room_id,
-              teacherId: data.teacher_id,
-              maxStudents: data.max_students,
-              subjects: data.subjects || [],
-              schedule: data.schedule || []
+              subjects: data.subjects || []
             }]
           }))
         }
@@ -313,13 +315,21 @@ export const useSchoolStore = create<SchoolStore>()(
         const updates: any = {}
         if (schoolClass.name) updates.name = schoolClass.name
         if (schoolClass.level) updates.level = schoolClass.level
-        if (schoolClass.room_id) updates.room_id = schoolClass.room_id
-        if (schoolClass.teacher_id) updates.teacher_id = schoolClass.teacher_id
-        if (schoolClass.max_students) updates.max_students = schoolClass.max_students
+        if ((schoolClass as any).room_id || (schoolClass as any).roomId) {
+          updates.room_id = (schoolClass as any).room_id || (schoolClass as any).roomId
+        }
         if (schoolClass.subjects) updates.subjects = schoolClass.subjects
-        if (schoolClass.schedule) updates.schedule = schoolClass.schedule
-        await supabase.from('classes').update(updates).eq('id', id)
-        set((state) => ({ classes: state.classes.map(c => c.id === id ? { ...c, ...schoolClass } : c) }))
+        
+        const { error } = await supabase.from('classes').update(updates).eq('id', id)
+        
+        if (error) {
+          console.error('❌ updateClass error:', error)
+          throw error
+        }
+
+        set((state) => ({
+          classes: state.classes.map(c => c.id === id ? { ...c, ...schoolClass } : c)
+        }))
       },
 
       deleteClass: async (id) => {
