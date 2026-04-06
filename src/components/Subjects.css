@@ -59,7 +59,7 @@
 .subject-name {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--text-color) !important;
+  color: #0f172a !important; /* Slate 900 - dark color for light mode */
   margin: 0;
   word-break: break-word;
   overflow-wrap: break-word;
@@ -70,6 +70,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.2;
+}
+
+.dark-mode .subject-name {
+  color: #f8fafc !important; /* Slate 50 - light color for dark mode */
 }
 
 .subject-badge {
