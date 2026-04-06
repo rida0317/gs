@@ -167,9 +167,10 @@
 }
 
 .sidebar-user-dropdown {
-  position: fixed;
-  bottom: 80px;
-  left: 1rem;
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
   width: 300px;
   z-index: 1002;
   background: var(--card-bg);
@@ -183,11 +184,11 @@
 @keyframes dropdownSlideUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateX(-50%) translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
   }
 }
 
