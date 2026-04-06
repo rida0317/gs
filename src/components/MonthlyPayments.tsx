@@ -145,6 +145,7 @@ const MonthlyPayments: React.FC = () => {
     }
 
     try {
+      console.log('🔄 Attempting to record payment...')
       const payment = await markAsPaid(
         selectedStudentId,
         currentMonth,
@@ -154,10 +155,11 @@ const MonthlyPayments: React.FC = () => {
         user?.displayName || user?.email || 'Administration',
         paymentData.notes
       )
+      console.log('✅ Payment recorded:', payment)
 
       alert('✅ Paiement enregistré avec succès!')
       setShowPaymentModal(false)
-      
+
       // Show receipt
       setCurrentReceipt({
         receiptNumber: payment.receiptNumber,
@@ -171,8 +173,9 @@ const MonthlyPayments: React.FC = () => {
       })
       setShowReceipt(true)
     } catch (error) {
-      alert('❌ Erreur lors du paiement')
-      console.error(error)
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error'
+      alert('❌ Erreur lors du paiement: ' + errorMsg)
+      console.error('❌ Payment error:', error)
     }
   }
 
