@@ -106,12 +106,13 @@
 
 .stat-header {
   font-size: 0.7rem;
-  color: #475569 !important; /* Slate 600 - darker for better visibility in light mode */
+  color: #1e293b !important; /* Slate 800 - darker for better visibility */
   text-transform: capitalize;
+  font-weight: 600;
 }
 
 .dark-mode .stat-header {
-  color: #94a3b8 !important; /* Slate 400 for dark mode */
+  color: #e2e8f0 !important; /* Slate 200 for dark mode */
 }
 
 .stat-number {
@@ -131,16 +132,27 @@
 .tag {
   font-size: 0.7rem;
   padding: 4px 10px;
-  background: var(--bg-color);
-  border: 1px solid var(--border-color);
+  background: #f1f5f9; /* Light gray background */
+  border: 1px solid #cbd5e1;
   border-radius: 4px;
-  color: var(--text-muted);
+  color: #334155 !important; /* Slate 700 - darker for better visibility */
+  font-weight: 500;
+}
+
+.dark-mode .tag {
+  background: #334155;
+  border-color: #475569;
+  color: #e2e8f0 !important;
 }
 
 .tag-empty {
   font-size: 0.7rem;
-  color: var(--text-muted);
+  color: #64748b !important; /* Slate 500 - more visible */
   font-style: italic;
+}
+
+.dark-mode .tag-empty {
+  color: #94a3b8 !important;
 }
 
 .subject-actions {
