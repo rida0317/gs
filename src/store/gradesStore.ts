@@ -403,8 +403,8 @@ export const useGradesStore = create<GradesStore>()(
 
       addGradesBulk: async (grades) => {
         const academicYear = useSchoolStore.getState().academicYear
-        const currentSchoolId = useSchoolPlatformStore.getState().currentSchoolId
-        if (!currentSchoolId) throw new Error('No school selected')
+        const DEFAULT_SCHOOL_ID = '00000000-0000-0000-0000-000000000001'
+        const currentSchoolId = useSchoolPlatformStore.getState().currentSchoolId || DEFAULT_SCHOOL_ID
 
         set({ isLoading: true })
         try {
