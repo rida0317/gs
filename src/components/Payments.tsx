@@ -17,8 +17,13 @@ const Payments: React.FC = () => {
   const payments = usePayments()
   const stats = usePaymentStats()
   const reminders = usePaymentReminders()
-  
-  const { createPayment: create, recordPayment: record, setAcademicYear } = usePaymentsStore()
+
+  const { createPayment: create, recordPayment: record, setAcademicYear, fetchPayments } = usePaymentsStore()
+
+  // Fetch payments from Supabase on mount
+  useEffect(() => {
+    fetchPayments()
+  }, [fetchPayments])
 
   const [activeTab, setActiveTab] = useState<'list' | 'new' | 'reminders'>('list')
   const [showRecordModal, setShowRecordModal] = useState(false)

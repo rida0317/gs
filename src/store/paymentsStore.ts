@@ -2,6 +2,8 @@
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { supabase } from '../lib/supabaseClient'
+import { useSchoolPlatformStore } from './schoolPlatformStore'
 import paymentService, { type Payment, type PaymentRecord, type PaymentStats, type PaymentReminder } from '../services/payments.service'
 import type { Student } from '../types'
 
@@ -23,6 +25,9 @@ interface PaymentsState {
 }
 
 interface PaymentsActions {
+  // Fetch from Supabase
+  fetchPayments: () => Promise<void>
+  
   // CRUD Payments
   createPayment: (payment: Omit<Payment, 'id' | 'createdAt' | 'updatedAt' | 'paidAmount' | 'remainingAmount' | 'status'>) => Promise<Payment>
   updatePayment: (paymentId: string, updates: Partial<Payment>) => Promise<Payment | null>
@@ -78,6 +83,48 @@ export const usePaymentsStore = create<PaymentsStore>()(
   persist(
     (set, get) => ({
       ...initialState,
+
+      // ========== FETCH PAYMENTS FROM SUPABASE ==========
+
+      fetchPayments: async () => {
+        const currentSchoolId = useSchoolPlatformStore.getState().currentSchoolId
+        if (!currentSchoolId) return
+
+        set({ isLoading: true, error: null })
+        try {
+          const { data, error } = await supabase
+            .from('payments')
+            .select('*')
+            .eq('school_id', currentSchoolId)
+            .order('created_at', { ascending: false })
+
+          if (error) throw error
+
+          const mappedPayments: Payment[] = (data || []).map(p => ({
+            id: p.id,
+            studentId: p.student_id,
+            schoolId: p.school_id,
+            amount: p.amount,
+            paidAmount: p.paid_amount,
+            remainingAmount: p.remaining_amount,
+            type: p.type,
+            status: p.status,
+            dueDate: p.due_date,
+            paymentDate: p.payment_date,
+            academicYear: p.academic_year,
+            notes: p.notes,
+            createdAt: p.created_at,
+            updatedAt: p.updated_at
+          }))
+
+          set({ payments: mappedPayments, isLoading: false })
+        } catch (error) {
+          set({
+            error: error instanceof Error ? error.message : 'Failed to fetch payments',
+            isLoading: false
+          })
+        }
+      },
 
       // ========== CRUD PAYMENTS ==========
 

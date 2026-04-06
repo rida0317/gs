@@ -5,6 +5,8 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- 1. CLEANUP
+DROP TABLE IF EXISTS public.payment_records CASCADE;
+DROP TABLE IF EXISTS public.payments CASCADE;
 DROP TABLE IF EXISTS public.custom_levels CASCADE;
 DROP TABLE IF EXISTS public.custom_subjects CASCADE;
 DROP TABLE IF EXISTS public.stock_loans CASCADE;
@@ -158,7 +160,40 @@ CREATE TABLE public.absences (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
--- 11. REPLACEMENTS
+-- 11. PAYMENTS
+CREATE TABLE public.payments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    student_id UUID REFERENCES public.students(id) ON DELETE CASCADE,
+    school_id UUID REFERENCES public.schools(id) ON DELETE CASCADE,
+    amount NUMERIC NOT NULL,
+    paid_amount NUMERIC DEFAULT 0,
+    remaining_amount NUMERIC NOT NULL,
+    type TEXT NOT NULL CHECK (type IN ('inscription', 'mensualite', 'transport', 'cantine', 'autre')),
+    status TEXT DEFAULT 'pending' CHECK (status IN ('paid', 'partial', 'pending', 'overdue', 'cancelled')),
+    due_date DATE NOT NULL,
+    payment_date DATE,
+    academic_year TEXT DEFAULT '2023-2024',
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+-- 12. PAYMENT RECORDS (Transactions)
+CREATE TABLE public.payment_records (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    payment_id UUID REFERENCES public.payments(id) ON DELETE CASCADE,
+    student_id UUID REFERENCES public.students(id) ON DELETE CASCADE,
+    school_id UUID REFERENCES public.schools(id) ON DELETE CASCADE,
+    amount NUMERIC NOT NULL,
+    payment_date DATE DEFAULT CURRENT_DATE,
+    payment_method TEXT DEFAULT 'cash' CHECK (payment_method IN ('cash', 'check', 'bank_transfer', 'online')),
+    receipt_number TEXT UNIQUE NOT NULL,
+    notes TEXT,
+    recorded_by UUID,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+-- 13. REPLACEMENTS
 CREATE TABLE public.replacements (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     school_id UUID REFERENCES public.schools(id) ON DELETE CASCADE,
