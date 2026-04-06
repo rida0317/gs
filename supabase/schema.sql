@@ -5,6 +5,7 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- 1. CLEANUP
+DROP TABLE IF EXISTS public.monthly_payments CASCADE;
 DROP TABLE IF EXISTS public.payment_records CASCADE;
 DROP TABLE IF EXISTS public.payments CASCADE;
 DROP TABLE IF EXISTS public.custom_levels CASCADE;
@@ -193,7 +194,30 @@ CREATE TABLE public.payment_records (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
--- 13. REPLACEMENTS
+-- 13. MONTHLY PAYMENTS (Scolarité)
+CREATE TABLE public.monthly_payments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    student_id UUID REFERENCES public.students(id) ON DELETE CASCADE,
+    school_id UUID REFERENCES public.schools(id) ON DELETE CASCADE,
+    academic_year TEXT DEFAULT '2023-2024',
+    month INTEGER NOT NULL CHECK (month BETWEEN 1 AND 12),
+    base_amount NUMERIC NOT NULL,
+    transport_amount NUMERIC DEFAULT 0,
+    discount NUMERIC DEFAULT 0,
+    paid_amount NUMERIC DEFAULT 0,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('paid', 'pending', 'partial', 'exempt')),
+    payment_date TIMESTAMP WITH TIME ZONE,
+    payment_method TEXT CHECK (payment_method IN ('especes', 'cheque', 'virement')),
+    receipt_number TEXT,
+    notes TEXT,
+    paid_by UUID,
+    paid_by_name TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    UNIQUE(student_id, academic_year, month)
+);
+
+-- 14. REPLACEMENTS
 CREATE TABLE public.replacements (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     school_id UUID REFERENCES public.schools(id) ON DELETE CASCADE,

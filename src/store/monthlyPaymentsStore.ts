@@ -3,6 +3,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { supabase } from '../lib/supabaseClient'
+import { useSchoolPlatformStore } from './schoolPlatformStore'
 
 export type PaymentStatus = 'paid' | 'pending' | 'partial' | 'exempt'
 export type PaymentMethod = 'especes' | 'cheque' | 'virement'
@@ -205,8 +206,8 @@ export const useMonthlyPaymentsStore = create<MonthlyPaymentsStore>()(
           p => p.studentId === studentId && p.month === month && p.academicYear === academicYear
         )
 
-        const paymentId = existingIndex >= 0 
-          ? get().payments[existingIndex].id 
+        const paymentId = existingIndex >= 0
+          ? get().payments[existingIndex].id
           : `payment-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
         const payment: MonthlyPayment = {
@@ -229,18 +230,33 @@ export const useMonthlyPaymentsStore = create<MonthlyPaymentsStore>()(
           updatedAt: new Date().toISOString()
         }
 
-        // Save to Firebase (Optimistic update handled by Firestore persistence)
+        // Save to Supabase
         try {
-          const paymentRef = doc(db, 'monthly_payments', payment.id)
-          await setDoc(paymentRef, {
-            ...payment,
-            updatedAt: serverTimestamp(),
-            // Only set createdAt if it's a new document
-            ...(existingIndex < 0 ? { createdAt: serverTimestamp() } : {})
-          }, { merge: true })
+          const { error } = await supabase
+            .from('monthly_payments')
+            .upsert([{
+              id: payment.id,
+              student_id: studentId,
+              academic_year: academicYear,
+              month: month,
+              base_amount: amount,
+              transport_amount: 0,
+              discount: 0,
+              paid_amount: amount,
+              status: 'paid',
+              payment_date: new Date().toISOString(),
+              payment_method: paymentMethod,
+              receipt_number: receiptNumber,
+              notes,
+              paid_by: paidBy,
+              paid_by_name: paidByName,
+              created_at: existingIndex >= 0 ? payment.createdAt : new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }])
+
+          if (error) throw error
         } catch (error) {
-          console.error('Error saving monthly payment to Firebase:', error)
-          // We continue because persistence will sync it later
+          console.error('Error saving monthly payment to Supabase:', error)
         }
 
         set((state) => {
@@ -534,19 +550,43 @@ export const useMonthlyPaymentsStore = create<MonthlyPaymentsStore>()(
         set({ error })
       },
 
-      // ========== FIREBASE SYNC ==========
+      // ========== SUPABASE SYNC ==========
 
       loadFromFirebase: async () => {
         try {
           const academicYear = get().academicYear
-          const q = query(collection(db, 'monthly_payments'), where('academicYear', '==', academicYear))
-          const querySnapshot = await getDocs(q)
-          
-          const payments: MonthlyPayment[] = []
-          querySnapshot.forEach((doc) => {
-            payments.push({ id: doc.id, ...doc.data() } as MonthlyPayment)
-          })
-          
+          const currentSchoolId = useSchoolPlatformStore.getState().currentSchoolId
+          if (!currentSchoolId) return
+
+          const { data, error } = await supabase
+            .from('monthly_payments')
+            .select('*')
+            .eq('school_id', currentSchoolId)
+            .eq('academic_year', academicYear)
+            .order('created_at', { ascending: false })
+
+          if (error) throw error
+
+          const payments: MonthlyPayment[] = (data || []).map(p => ({
+            id: p.id,
+            studentId: p.student_id,
+            academicYear: p.academic_year,
+            month: p.month,
+            baseAmount: p.base_amount,
+            transportAmount: p.transport_amount,
+            discount: p.discount,
+            paidAmount: p.paid_amount,
+            status: p.status,
+            paymentDate: p.payment_date,
+            paymentMethod: p.payment_method,
+            receiptNumber: p.receipt_number,
+            notes: p.notes,
+            paidBy: p.paid_by,
+            paidByName: p.paid_by_name,
+            createdAt: p.created_at,
+            updatedAt: p.updated_at
+          }))
+
           set({
             payments: [...payments, ...get().payments].filter(
               (v, i, a) => a.findIndex(p => p.id === v.id) === i
@@ -555,8 +595,8 @@ export const useMonthlyPaymentsStore = create<MonthlyPaymentsStore>()(
             lastSyncTime: new Date().toISOString()
           })
         } catch (error) {
-          console.error('Error loading monthly payments from Firebase:', error)
-          set({ error: 'Erreur de chargement depuis Firebase' })
+          console.error('Error loading monthly payments from Supabase:', error)
+          set({ error: 'Erreur de chargement depuis Supabase' })
         }
       },
 
