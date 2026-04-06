@@ -106,13 +106,14 @@
 
 .stat-header {
   font-size: 0.7rem;
-  color: #1e293b !important; /* Slate 800 - darker for better visibility */
+  color: #000000 !important; /* Pure black - maximum visibility */
   text-transform: capitalize;
-  font-weight: 600;
+  font-weight: 700;
+  text-shadow: 0 0 1px rgba(0,0,0,0.1);
 }
 
 .dark-mode .stat-header {
-  color: #e2e8f0 !important; /* Slate 200 for dark mode */
+  color: #ffffff !important; /* Pure white for dark mode */
 }
 
 .stat-number {
