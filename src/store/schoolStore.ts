@@ -185,7 +185,13 @@ export const useSchoolStore = create<SchoolStore>()(
               max_students: c.max_students, subjects: c.subjects || [], schedule: c.schedule || {}
             })),
             students: (students || []).map((s: any) => ({
-              id: s.id, name: s.full_name, classId: s.class_id, codeMassar: s.code_massar, parentPhone: s.parent_phone, is_active: s.is_active
+              id: s.id, 
+              name: s.full_name || s.name, 
+              classId: s.class_id, 
+              codeMassar: s.code_massar, 
+              parentPhone: s.parent_phone, 
+              academicYear: s.academic_year || useSchoolStore.getState().academicYear,
+              is_active: s.is_active
             })),
             salles: (salles || []).map((s: any) => ({
               id: s.id, name: s.name, capacity: s.capacity, type: s.type
