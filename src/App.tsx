@@ -74,6 +74,8 @@ function App() {
                 <Route path="users" element={<ProtectedRoute allowedRoles={['admin', 'director']}><UserManagement /></ProtectedRoute>} />
                 <Route path="user-manager" element={<ProtectedRoute allowedRoles={['admin', 'director']}><UserManager /></ProtectedRoute>} />
                 <Route path="schools" element={<ProtectedRoute allowedRoles={['admin', 'director']}><SchoolsAdmin /></ProtectedRoute>} />
+                {/* Catch all for invalid routes -> Redirect to Dashboard */}
+                <Route path="*" element={<Navigate to="/dashboard" replace />} />
               </Route>
             </Routes>
             <ToastContainer />
