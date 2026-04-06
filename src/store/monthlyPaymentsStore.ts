@@ -232,11 +232,15 @@ export const useMonthlyPaymentsStore = create<MonthlyPaymentsStore>()(
 
         // Save to Supabase
         try {
+          const currentSchoolId = useSchoolPlatformStore.getState().currentSchoolId
+          if (!currentSchoolId) throw new Error('No school selected')
+
           const { error } = await supabase
             .from('monthly_payments')
             .upsert([{
               id: payment.id,
               student_id: studentId,
+              school_id: currentSchoolId,
               academic_year: academicYear,
               month: month,
               base_amount: amount,
@@ -254,9 +258,13 @@ export const useMonthlyPaymentsStore = create<MonthlyPaymentsStore>()(
               updated_at: new Date().toISOString()
             }])
 
-          if (error) throw error
+          if (error) {
+            console.error('Supabase error:', error)
+            throw error
+          }
         } catch (error) {
           console.error('Error saving monthly payment to Supabase:', error)
+          throw error
         }
 
         set((state) => {
