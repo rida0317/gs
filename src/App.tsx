@@ -25,7 +25,6 @@ import ReportCards from './components/ReportCards'
 import Homework from './components/Homework'
 import QRCodeGenerator from './components/QRCodeGenerator'
 import QRCodeScanner from './components/QRCodeScanner'
-import Gamification from './components/Gamification'
 import Payments from './components/Payments'
 import Library from './components/Library'
 import VideoConference from './components/VideoConference'
@@ -36,9 +35,6 @@ import Signup from './components/Auth/Signup'
 import UserManagement from './components/admin/UserManagement'
 import SchoolsAdmin from './components/admin/SchoolsAdmin'
 import UserManager from './components/admin/UserManager'
-import DashboardV2 from './components/DashboardV2'
-import DashboardV3 from './components/DashboardV3'
-import DashboardV4 from './components/DashboardV4'
 import './components/Dashboard.css'
 
 function App() {
@@ -54,9 +50,6 @@ function App() {
               <Route path="/" element={<Layout />}>
                 <Route index element={<Navigate to="/dashboard" replace />} />
                 <Route path="dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="dashboard-v2" element={<ProtectedRoute><DashboardV2 /></ProtectedRoute>} />
-                <Route path="dashboard-v3" element={<ProtectedRoute><DashboardV3 /></ProtectedRoute>} />
-                <Route path="dashboard-v4" element={<ProtectedRoute><DashboardV4 /></ProtectedRoute>} />
                 <Route path="teachers" element={<ProtectedRoute requiredPermission="canAccessTeachers"><Teachers /></ProtectedRoute>} />
                 <Route path="classes" element={<ProtectedRoute requiredPermission="canAccessClasses"><Classes /></ProtectedRoute>} />
                 <Route path="subjects" element={<ProtectedRoute requiredPermission="canAccessClasses"><Subjects /></ProtectedRoute>} />
@@ -69,7 +62,6 @@ function App() {
                 <Route path="homework" element={<ProtectedRoute requiredPermission="canAccessHomework"><Homework /></ProtectedRoute>} />
                 <Route path="qr-generate" element={<ProtectedRoute requiredPermission="canAccessQRCode"><QRCodeGenerator /></ProtectedRoute>} />
                 <Route path="attendance/scan" element={<ProtectedRoute requiredPermission="canScanQRCode"><QRCodeScanner /></ProtectedRoute>} />
-                <Route path="gamification" element={<ProtectedRoute requiredPermission="canAccessGamification"><Gamification /></ProtectedRoute>} />
                 <Route path="payments" element={<ProtectedRoute requiredPermission="canAccessPayments"><Payments /></ProtectedRoute>} />
                 <Route path="library" element={<ProtectedRoute requiredPermission="canAccessLibrary"><Library /></ProtectedRoute>} />
                 <Route path="video" element={<ProtectedRoute requiredPermission="canAccessTimetable"><VideoConference /></ProtectedRoute>} />
