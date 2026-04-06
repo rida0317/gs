@@ -9,6 +9,7 @@ import { hasPermission } from '../config/permissions'
 import NotificationBell from './NotificationBell'
 import { useTranslation } from '../hooks/useTranslation'
 import SchoolSwitcher from './SchoolSwitcher'
+import { useAutoLogout } from '../hooks/useAutoLogout'
 import './SidebarFooter.css'
 
 // SVG Icons Components
@@ -52,6 +53,9 @@ const Layout: React.FC = () => {
   const { t, language, dir } = useTranslation()
   const location = useLocation()
   const navigate = useNavigate()
+
+  // 🔒 Auto-logout on inactivity (1 min) and tab close
+  useAutoLogout()
 
   // Initialize schools when user logs in
   useEffect(() => {
