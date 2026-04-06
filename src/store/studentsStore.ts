@@ -59,7 +59,7 @@ export const useStudentsStore = create<StudentsStore>()(
 
           const mappedStudents: Student[] = data.map(s => ({
             id: s.id,
-            name: s.name,
+            name: s.full_name || s.name,
             classId: s.class_id,
             academicYear: s.academic_year,
             codeMassar: s.code_massar,
@@ -223,7 +223,8 @@ export const useStudentsStore = create<StudentsStore>()(
 
 // Selector hooks for better performance
 export const useStudents = () => {
-  const allStudents = useStudentsStore((state) => state.students)
+  // Read from schoolStore since fetchAllData populates it
+  const allStudents = useSchoolStore((state) => state.students)
   // Show all students regardless of academic year
   return allStudents
 }
