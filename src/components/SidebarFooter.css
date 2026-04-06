@@ -98,7 +98,7 @@
   transform: scale(1.05);
 }
 
-/* Sidebar Footer - School Switcher + User Actions */
+/* Sidebar Footer - School Switcher Only */
 .sidebar-footer {
   padding: 1rem;
   border-top: 1px solid var(--border-color);
@@ -109,87 +109,6 @@
   margin-top: auto;
   position: relative;
   z-index: 1000;
-  overflow: visible;
-}
-
-/* User Actions in Sidebar Footer */
-.sidebar-user-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  justify-content: center;
-  padding: 0.5rem 0;
-}
-
-.sidebar-action-btn,
-.sidebar-user-actions .notification-bell,
-.sidebar-user-actions .sidebar-avatar-btn {
-  background: var(--hover-bg);
-  border: none;
-  font-size: 1.1rem;
-  color: var(--text-color);
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: var(--radius-md);
-  transition: var(--transition);
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.sidebar-action-btn:hover,
-.sidebar-user-actions .notification-bell:hover,
-.sidebar-user-actions .sidebar-avatar-btn:hover {
-  background: var(--primary-color);
-  color: #ffffff;
-  transform: scale(1.08);
-  box-shadow: 0 2px 8px rgba(30, 58, 138, 0.3);
-}
-
-.sidebar-avatar {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-
-.sidebar-user-menu-container {
-  position: relative;
-  z-index: 1005;
-}
-
-.sidebar-user-dropdown {
-  position: fixed;
-  bottom: 75px;
-  left: 8px;
-  width: 280px;
-  z-index: 1003;
-  background: var(--card-bg);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--border-color);
-  overflow: hidden;
-  animation: dropdownSlideUp 0.2s ease-out;
-}
-
-@keyframes dropdownSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .sidebar-container.sidebar-collapsed .sidebar-footer {
@@ -253,18 +172,6 @@
 @media (max-width: 1024px) {
   .sidebar-footer {
     padding: 0.75rem;
-  }
-
-  .sidebar-user-actions {
-    gap: 0.4rem;
-  }
-
-  .sidebar-action-btn,
-  .sidebar-user-actions .notification-bell,
-  .sidebar-user-actions .sidebar-avatar-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
   }
 
   .top-user-actions {

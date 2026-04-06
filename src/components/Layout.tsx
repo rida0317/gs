@@ -294,61 +294,15 @@ const Layout: React.FC = () => {
             ))}
           </nav>
 
-          {/* Sidebar Footer - School Switcher + User Actions */}
+          {/* Sidebar Footer - School Switcher Only */}
           <div className="sidebar-footer">
             <SchoolSwitcher />
-            {/* User Actions - Avatar, Notification, Dark Mode */}
-            <div className="sidebar-user-actions">
-              <button onClick={toggleDarkMode} className="sidebar-action-btn" title={darkMode ? 'Light Mode' : 'Dark Mode'}>
-                {darkMode ? '☀️' : '🌙'}
-              </button>
-              <NotificationBell />
-              <div className="sidebar-user-menu-container">
-                <button
-                  className="sidebar-avatar-btn"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleUserMenuClick()
-                  }}
-                >
-                  <span className="sidebar-avatar">
-                    {(user?.displayName || user?.email || 'U')[0].toUpperCase()}
-                  </span>
-                </button>
-
-                {userMenuOpen && (
-                  <div className="user-menu-dropdown sidebar-user-dropdown">
-                    <div className="user-menu-header">
-                      <div className="user-menu-avatar">
-                        {(user?.displayName || user?.email || 'U')[0].toUpperCase()}
-                      </div>
-                      <div className="user-menu-info">
-                        <div className="user-menu-name">{user?.displayName || user?.email}</div>
-                        <div className="user-menu-email">{user?.email}</div>
-                        <div className="user-menu-role">{userData?.role || 'User'}</div>
-                      </div>
-                    </div>
-
-                    <div className="user-menu-divider"></div>
-
-                    <div className="user-menu-footer">
-                      <button className="user-menu-btn" onClick={handleProfileClick}>
-                        ⚙️ {t('nav.settings')}
-                      </button>
-                      <button className="user-menu-btn logout" onClick={handleLogoutClick}>
-                        🚪 {t('nav.logout')}
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
           </div>
         </aside>
 
         {/* Main Content */}
         <main className={`main-content ${sidebarCollapsed ? 'main-expanded' : ''}`}>
-          {/* Top Bar - Mobile Menu Only */}
+          {/* Top Bar - User Actions (Outside Sidebar) */}
           <div className="top-user-actions">
             {!mobileMenuOpen && (
               <button
@@ -362,6 +316,49 @@ const Layout: React.FC = () => {
                 <MenuIcon />
               </button>
             )}
+            <button onClick={toggleDarkMode} className="top-action-btn" title={darkMode ? 'Light Mode' : 'Dark Mode'}>
+              {darkMode ? '☀️' : '🌙'}
+            </button>
+            <NotificationBell />
+            <div className="user-menu-container">
+              <button
+                className="user-avatar-btn"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleUserMenuClick()
+                }}
+              >
+                <span className="user-avatar">
+                  {(user?.displayName || user?.email || 'U')[0].toUpperCase()}
+                </span>
+              </button>
+
+              {userMenuOpen && (
+                <div className="user-menu-dropdown top-user-dropdown">
+                  <div className="user-menu-header">
+                    <div className="user-menu-avatar">
+                      {(user?.displayName || user?.email || 'U')[0].toUpperCase()}
+                    </div>
+                    <div className="user-menu-info">
+                      <div className="user-menu-name">{user?.displayName || user?.email}</div>
+                      <div className="user-menu-email">{user?.email}</div>
+                      <div className="user-menu-role">{userData?.role || 'User'}</div>
+                    </div>
+                  </div>
+
+                  <div className="user-menu-divider"></div>
+
+                  <div className="user-menu-footer">
+                    <button className="user-menu-btn" onClick={handleProfileClick}>
+                      ⚙️ {t('nav.settings')}
+                    </button>
+                    <button className="user-menu-btn logout" onClick={handleLogoutClick}>
+                      🚪 {t('nav.logout')}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="page-content">
