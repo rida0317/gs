@@ -202,11 +202,45 @@ export const usePaymentsStore = create<PaymentsStore>()(
             recordedByName,
             notes
           )
-          set((state) => ({
-            records: [record, ...state.records],
-            isLoading: false
-          }))
+          
+          // Update the payment in the store with new paid/remaining amounts
+          const payment = get().payments.find(p => p.id === paymentId)
+          if (payment) {
+            const newPaidAmount = (payment.paidAmount || 0) + amount
+            const newRemainingAmount = payment.amount - newPaidAmount
+            let newStatus = 'pending'
+            
+            if (newPaidAmount >= payment.amount) {
+              newStatus = 'paid'
+            } else if (newPaidAmount > 0) {
+              newStatus = 'partial'
+            }
+            
+            const updatedPayment = {
+              ...payment,
+              paidAmount: newPaidAmount,
+              remainingAmount: newRemainingAmount,
+              status: newStatus as any,
+              paymentDate: newStatus === 'paid' ? new Date().toISOString().split('T')[0] : payment.paymentDate
+            }
+            
+            set((state) => ({
+              payments: state.payments.map(p => p.id === paymentId ? updatedPayment : p),
+              records: [record, ...state.records],
+              isLoading: false
+            }))
+          } else {
+            set((state) => ({
+              records: [record, ...state.records],
+              isLoading: false
+            }))
+          }
+          
           get().refreshStats()
+          
+          // Refresh from Supabase to ensure consistency
+          setTimeout(() => get().fetchPayments(), 500)
+          
           return record
         } catch (error) {
           set({
