@@ -286,11 +286,6 @@ export const useSchoolStore = create<SchoolStore>()(
           is_active: true
         }
 
-        // Only add room_id if it has a value (room_id column exists in DB)
-        if ((schoolClass as any).roomId) {
-          classData.room_id = (schoolClass as any).roomId
-        }
-
         const { data, error } = await supabase.from('classes').insert([classData]).select().single()
 
         if (error) {
@@ -304,7 +299,6 @@ export const useSchoolStore = create<SchoolStore>()(
               id: data.id,
               name: data.name,
               level: data.level,
-              roomId: data.room_id,
               subjects: data.subjects || []
             }]
           }))
@@ -315,9 +309,6 @@ export const useSchoolStore = create<SchoolStore>()(
         const updates: any = {}
         if (schoolClass.name) updates.name = schoolClass.name
         if (schoolClass.level) updates.level = schoolClass.level
-        if ((schoolClass as any).room_id || (schoolClass as any).roomId) {
-          updates.room_id = (schoolClass as any).room_id || (schoolClass as any).roomId
-        }
         if (schoolClass.subjects) updates.subjects = schoolClass.subjects
         
         const { error } = await supabase.from('classes').update(updates).eq('id', id)
