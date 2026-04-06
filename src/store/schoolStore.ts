@@ -158,22 +158,46 @@ export const useSchoolStore = create<SchoolStore>()(
         try {
           const currentSchoolId = useSchoolPlatformStore.getState().currentSchoolId || DEFAULT_SCHOOL_ID
           console.log('🔄 Syncing ALL data from Supabase for school:', currentSchoolId)
-          
+
+          // Import grades store to sync grades too
+          const { useGradesStore } = await import('./gradesStore')
+
           const [
             { data: teachers },
             { data: classes },
             { data: students },
             { data: salles },
             { data: subjects },
-            { data: levels }
+            { data: levels },
+            { data: grades }
           ] = await Promise.all([
             supabase.from('teachers').select('*').eq('school_id', currentSchoolId).eq('is_active', true),
             supabase.from('classes').select('*').eq('school_id', currentSchoolId).eq('is_active', true),
             supabase.from('students').select('*').eq('school_id', currentSchoolId).eq('is_active', true),
             supabase.from('salles').select('*').eq('school_id', currentSchoolId).eq('is_active', true),
             supabase.from('subjects').select('*').eq('school_id', currentSchoolId).eq('is_active', true),
-            supabase.from('levels').select('*').eq('school_id', currentSchoolId).eq('is_active', true)
+            supabase.from('levels').select('*').eq('school_id', currentSchoolId).eq('is_active', true),
+            supabase.from('grades').select('*').eq('school_id', currentSchoolId)
           ])
+
+          // Update grades store
+          if (grades && grades.length > 0) {
+            const mappedGrades = grades.map(g => ({
+              id: g.id,
+              studentId: g.student_id,
+              classId: g.class_id,
+              subject: g.subject,
+              examType: g.exam_type,
+              grade: g.grade,
+              academicYear: g.academic_year,
+              coefficient: g.coefficient,
+              teacherId: g.teacher_id,
+              comment: g.comment,
+              date: g.date
+            }))
+            useGradesStore.getState().grades = mappedGrades
+            useGradesStore.setState({ grades: mappedGrades })
+          }
 
           set({
             teachers: (teachers || []).map((t: any) => ({
@@ -185,11 +209,11 @@ export const useSchoolStore = create<SchoolStore>()(
               max_students: c.max_students, subjects: c.subjects || [], schedule: c.schedule || {}
             })),
             students: (students || []).map((s: any) => ({
-              id: s.id, 
-              name: s.full_name || s.name, 
-              classId: s.class_id, 
-              codeMassar: s.code_massar, 
-              parentPhone: s.parent_phone, 
+              id: s.id,
+              name: s.full_name || s.name,
+              classId: s.class_id,
+              codeMassar: s.code_massar,
+              parentPhone: s.parent_phone,
               academicYear: s.academic_year || useSchoolStore.getState().academicYear,
               is_active: s.is_active
             })),
